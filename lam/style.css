@@ -1,0 +1,119 @@
+:root {
+    --primary-color: #E30613; /* Vermelho Oficial LAM */
+    --accent-color: #FFC20E;  /* Amarelo Oficial LAM */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #060709;
+    color: #ffffff;
+    overflow-x: hidden;
+}
+
+/* Fixa o vídeo no fundo do ecrã inteiro */
+.video-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
+
+.video-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Faz o vídeo preencher todo o espaço sem distorcer */
+}
+
+/* Camada escura transparente para destacar o texto */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(6,7,9,0.3) 0%, rgba(6,7,9,0.75) 100%);
+}
+
+/* Cada secção ocupa 100% da altura da janela para esticar o scroll */
+.panel {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 10%;
+    position: relative;
+}
+
+.central-text {
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.left-text { justify-content: flex-start; }
+.right-text { justify-content: flex-end; }
+
+/* Título Gigante Minimalista */
+.brand-title {
+    font-size: 8rem;
+    font-weight: 900;
+    margin: 0;
+    letter-spacing: -4px;
+    line-height: 1;
+}
+
+.brand-title span {
+    color: var(--primary-color);
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    color: var(--accent-color);
+    margin-top: 15px;
+    font-weight: 600;
+}
+
+/* Blocos de Texto Estilo Premium */
+.text-block {
+    max-width: 500px;
+    background: rgba(6, 7, 9, 0.45);
+    padding: 45px;
+    border-left: 4px solid var(--primary-color);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 0 16px 16px 0;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+}
+
+.text-block h2 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    line-height: 1.1;
+}
+
+.text-block p {
+    font-size: 1.1rem;
+    color: #a3b3c9;
+    line-height: 1.7;
+}
+
+.scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+}

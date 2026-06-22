@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAM - Linhas Aéreas de Moçambique | Conceito Premium</title>
+    
+    <!-- Bibliotecas GSAP para controlo de Scroll Profissional -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        :root {
+            --lam-vermelho: #E30613;
+            --lam-amarelo: #FFC20E;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            background-color: #000000; 
+            color: #ffffff; 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            overflow-x: hidden;
+        }
+
+        /* Canvas Fixo para renderização de alta performance frame-a-frame */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        #sequenceCanvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Película escura gradual para garantir leitura do texto e destaque do formulário */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
+            z-index: 2;
+        }
+
+        /* Menu Corporativo Premium com Efeito Blur (Vidro Fosco) */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0));
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .logo-text {
+            font-weight: 900;
+            font-size: 2rem;
+            letter-spacing: -1px;
+            color: #ffffff;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+        
+        .logo-text span { color: var(--lam-vermelho); }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            transition: color 0.3s;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+        
+        .nav-links a:hover { color: var(--lam-amarelo); }
+
+        /* Estrutura de Conteúdo Flutuante */
+        main {
+            position: relative;
+            z-index: 3;
+        }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 120px 8% 60px 8%;
+        }
+
+        .content-left { align-items: flex-start; width: 100%; }
+        .content-right { align-items: flex-end; width: 100%; text-align: right; }
+
+        .text-wrapper {
+            max-width: 650px;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.9), 0 2px 8px rgba(0, 0, 0, 0.9);
+        }
+
+        .tagline {
+            color: var(--lam-amarelo);
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+        }
+
+        h1 { 
+            font-size: 4.5rem; 
+            font-weight: 900; 
+            letter-spacing: -2px; 
+            text-transform: uppercase; 
+            line-height: 0.95; 
+            margin-bottom: 25px;
+            color: #ffffff;
+        }
+
+        h1 span { color: var(--lam-vermelho); }
+        p { font-size: 1.25rem; color: #f1f5f9; line-height: 1.6; font-weight: 400; }
+
+        /* MOTOR DE BUSCA PREMIUM INTEGRADO (Frosted Glass Concept) */
+        .booking-container {
+            width: 100%;
+            max-width: 1050px;
+            margin-top: 40px;
+            background: rgba(6, 7, 9, 0.55);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 4px solid var(--lam-vermelho);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
+        }
+
+        .booking-tabs {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+        }
+
+        .booking-tabs label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s;
+        }
+
+        .booking-tabs input[type="radio"] {
+            accent-color: var(--lam-vermelho);
+        }
+
+        .booking-tabs label:hover { color: #ffffff; }
+
+        .booking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .input-group label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--lam-amarelo);
+            font-weight: 700;
+        }
+
+        .input-group select, 
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group select:focus, 
+        .input-group input:focus {
+            border-color: var(--lam-vermelho);
+        }
+
+        .input-group select option { background-color: #000000; }
+
+        .btn-booking {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--lam-vermelho);
+            color: #ffffff;
+            border: none;
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-booking:hover {
+            background-color: var(--lam-amarelo);
+            color: #000000;
+            transform: translateY(-2px);
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 30px;
+            left: 8%;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CANVAS FIXO PARA A SEQUÊNCIA -->
+    <div class="video-container">
+        <canvas id="sequenceCanvas"></canvas>
+        <div class="overlay"></div>
+    </div>
+
+    <!-- MENU CORPORATIVO -->
+    <nav>
+        <div class="logo-text">LAM<span>.</span></div>
+        <ul class="nav-links">
+            <li><a href="#">Corporativo</a></li>
+            <li><a href="#">Experiência</a></li>
+            <li><a href="#">Destinos</a></li>
+        </ul>
+    </nav>
+
+    <!-- PAINÉIS DE CONTEÚDO -->
+    <main>
+        <!-- Secção 1 -->
+        <section class="content-left">
+            <div class="text-wrapper">
+                <div class="tagline">Orgulho Moçambicano</div>
+                <h1>O Céu de<br><span>Moçambique</span>.</h1>
+                <p>Uma nova era digital começa aqui. Fundindo a nossa forte identidade com transições visuais de alta engenharia cinematográfica.</p>
+            </div>
+
+            <!-- Formulário do Motor de Busca -->
+            <div class="booking-container">
+                <form action="#" method="GET" onsubmit="event.preventDefault();">
+                    <div class="booking-tabs">
+                        <label><input type="radio" name="flight-type" checked> Ida e Volta</label>
+                        <label><input type="radio" name="flight-type"> Apenas Ida</label>
+                        <label><input type="radio" name="flight-type"> Multi-destinos</label>
+                    </div>
+                    <div class="booking-grid">
+                        <div class="input-group">
+                            <label>Origem</label>
+                            <select required>
+                                <option value="" disabled selected>Selecione a partida</option>
+                                <option value="MPM">Maputo (MPM)</option>
+                                <option value="BEW">Beira (BEW)</option>
+                                <option value="APL">Nampula (APL)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Destino</label>
+                            <select required>
+                                <option value="" disabled selected>Selecione o destino</option>
+                                <option value="BEW">Beira (BEW)</option>
+                                <option value="MPM">Maputo (MPM)</option>
+                                <option value="APL">Nampula (APL)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Ida</label>
+                            <input type="date" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Volta</label>
+                            <input type="date">
+                        </div>
+                        <div class="input-group">
+                            <label>Passageiros</label>
+                            <select>
+                                <option value="1">1 Adulto</option>
+                                <option value="2">2 Adultos</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn-booking">Pesquisar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="scroll-hint">Faz scroll para iniciar a viagem</div>
+        </section>
+
+        <!-- Secção 2 -->
+        <section class="content-right">
+            <div class="text-wrapper">
+                <div class="tagline">Classe Executiva</div>
+                <h1>Conforto<br><span>Absoluto</span>.</h1>
+                <p>Redefinimos o espaço e a tranquilidade acima das nuvens. Experiencie um serviço premium desenhado exclusivamente para a sua jornada.</p>
+            </div>
+        </section>
+
+        <!-- Secção 3 -->
+        <section class="content-left">
+            <div class="text-wrapper">
+                <div class="tagline">Novos Horizontes</div>
+                <h1>Conectando<br><span>Mundos</span>.</h1>
+                <p>Das rotas regionais aos grandes destinos internacionais, voamos com rigor, pontualidade e a nossa hospitalidade única.</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
